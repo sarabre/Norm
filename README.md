@@ -1,2 +1,2 @@
 # Norm
-Calculating different norms with unity
+Calculating norm with unity
