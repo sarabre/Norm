@@ -16,6 +16,7 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] private Image WarningImage;
     [SerializeField] private GameObject Warning;
     [SerializeField] private Text ResultText;
+    private List<GameObject> IndexesPrefab = new List<GameObject>();
 
     public void CheckP(bool IsPChecked)
     {
@@ -24,16 +25,39 @@ public class CanvasManager : MonoBehaviour
 
     public void MakeArray()
     {
-        GameObject NewPrefab;
         int length = System.Convert.ToInt16(NumberOfDimensionsField.text);
         
+        if(length > IndexPool.SharedInstance.amountToPool)
+        {
+            ShowAlert($"Currently it's not possible to initialaze more that {IndexPool.SharedInstance.amountToPool}. Check value of 'amountToPool'");
+            return;
+        }
+
         for (int i = 0; i < length; i++)
         {
-            NewPrefab = Instantiate(XsFieldPrefab, XsFieldPrefabParent);
-            NewPrefab.transform.GetChild(0).GetComponent<Text>().text = "X" + i;
+            GameObject NewIndex = IndexPool.SharedInstance.GetPooledObject();
+
+            if (NewIndex != null)
+            {
+                NewIndex.transform.GetChild(0).GetComponent<Text>().text = "X" + i;
+                NewIndex.SetActive(true);
+                IndexesPrefab.Add(NewIndex);
+            }
         }
     }
 
+    public void ResetAmounts()
+    {
+        for (int i = 0; i < IndexesPrefab.Count; i++)
+        {
+            IndexesPrefab[i].SetActive(false);
+        }
+
+        IndexesPrefab.Clear();
+        PValueField.text = string.Empty;
+        NumberOfDimensionsField.text = string.Empty;
+        ResultText.text = "...";
+    }
     public void Calculate()
     {
         int P = -2;

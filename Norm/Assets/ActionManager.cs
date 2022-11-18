@@ -18,4 +18,9 @@ public class ActionManager : MonoBehaviour
     {
         Singelton.Instance.CanvasManager.Calculate();
     }
+
+    public void ResetAmounts()
+    {
+        Singelton.Instance.CanvasManager.ResetAmounts();
+    }
 }
