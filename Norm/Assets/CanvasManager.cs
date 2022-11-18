@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class CanvasManager : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] private InputField NumberOfDimensionsField;
     [SerializeField] private GameObject XsFieldPrefab;
     [SerializeField] private Transform XsFieldPrefabParent;
+    [SerializeField] private Text WarningText;
+    [SerializeField] private Image WarningImage;
+    [SerializeField] private GameObject Warning;
+    [SerializeField] private Text ResultText;
 
     public void CheckP(bool IsPChecked)
     {
@@ -31,14 +36,56 @@ public class CanvasManager : MonoBehaviour
 
     public void Calculate()
     {
-        int P = System.Convert.ToInt16(PValueField.text);
-        // warning of p
+        int P = -2;
+        if (NormPCheckBox.isOn)
+        {
+            #region Check P
+            try
+            {
+                P = System.Convert.ToInt16(PValueField.text);
+            }
+            catch
+            {
+                StartCoroutine(ShowAlert("Enter P"));
+                return;
+            }
+            if (P < 0)
+            {
+                StartCoroutine(ShowAlert("P should be nonnegetive number"));
+                return;
+            }
+            #endregion
+        }
+
         InputField[] XText = XsFieldPrefabParent.GetComponentsInChildren<InputField>();
-        int[] X = new int[XText.Length];
+        float[] X = new float[XText.Length];
         for (int i = 0; i < XText.Length; i++)
         {
-            X[i] = System.Convert.ToInt16(XText[i].text);
+            try
+            {
+                Debug.Log($"Log >> Xi = {float.Parse(XText[i].text)}");
+                X[i] = float.Parse(XText[i].text);
+            }
+            catch
+            {
+                X[i] = 0;
+            }
             Debug.Log(X[i]);
         }
+
+        float result = 0;
+
+        Singelton.Instance.NormCalculater.CalculateNorm(P, X,out result);
+        ResultText.text = result.ToString();
+    }
+
+    IEnumerator ShowAlert(string WarningContent)
+    {
+        WarningText.text = WarningContent;
+        Warning.SetActive(true);
+        WarningImage.DOFade(0, 0);
+        WarningImage.DOFade(0.6f, 1);
+        yield return new WaitForSeconds(2f);
+        WarningImage.DOFade(0, 1).OnComplete(() => Warning.SetActive(false));
     }
 }
