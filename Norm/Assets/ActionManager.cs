@@ -23,4 +23,9 @@ public class ActionManager : MonoBehaviour
     {
         Singelton.Instance.CanvasManager.ResetAmounts();
     }
+
+    public void Close()
+    {
+        Application.Quit();
+    }
 }

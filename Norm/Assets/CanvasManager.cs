@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class CanvasManager : MonoBehaviour
 {
@@ -48,15 +49,7 @@ public class CanvasManager : MonoBehaviour
 
     public void ResetAmounts()
     {
-        for (int i = 0; i < IndexesPrefab.Count; i++)
-        {
-            IndexesPrefab[i].SetActive(false);
-        }
-
-        IndexesPrefab.Clear();
-        PValueField.text = string.Empty;
-        NumberOfDimensionsField.text = string.Empty;
-        ResultText.text = "...";
+        SceneManager.LoadScene("SampleScene");
     }
     public void Calculate()
     {
